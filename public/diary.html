@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Diary</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <style>
+    
+    body {
+    width: 100%;
+    height: 100%;
+    background: url(ny.jpg);
+    background: cover;
+     
+}
+
+.fieldsdiv {
+    width: 350px;
+    height: 550px;
+    top: 50%;
+    left: 25%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 15px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #fff;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+    border-radius: 10px;
+
+    /* -webkit-filter: drop-shadow(5px 5px 5px #fff700);   */
+}
+
+.label {
+    height: 40px;
+    -webkit-filter: drop-shadow(4px 4px 4px #000000);
+    /* -webkit-filter: drop-shadow(5px 5px 5px #fff700);  */
+}
+
+.inp {
+    height: 20px;
+    font-size: 14px;
+    color: #fff;
+    float: right;
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+    -webkit-filter: drop-shadow(8px 8px 8px #000000);
+    
+}
+
+.radinp {
+margin: 5%;
+}
+
+.labeldesc {
+    margin: 0 0 0 40%;
+}
+
+.description {
+    
+    width: 100%;
+    height: 100px;
+    padding: 15px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #fff;
+    background: rgba(172, 172, 172, 0.2);
+
+}
+
+
+.labelsave {
+    float: left;
+}
+
+.savebtn {
+    margin: 4% 0 0 40%;
+    
+}
+
+.searchdiv {
+    width: 300px;
+    top: 17%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 15px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+
+}
+
+.searchinp {
+    height: 20px;
+    width: 10px;
+    font-size: 14px;
+    color: #fff;
+    float: right;
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+}
+.searchallbtn {
+
+    top: 25%;
+    left: 80%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    
+
+}
+
+.diaryform {
+    width: 350px;
+    height: 450px;
+    top: 57%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 15px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #fff;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+    border-radius: 10px;
+
+}
+
+.alldiaries {
+    width: 350px;
+    height: 450px;
+    top: 57%;
+    left: 80%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 15px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #fff;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+    border-radius: 10px;
+
+}
+
+
+
+    
+    
+    
+    </style>
+        <div class="fieldsdiv">
+    <h1>Diary</h1>
+
+    <h3>Fill:</h3>
+
+    Title: <input id="title" class="inp" /><br>
+    Timetomaster: <input id="timeto" class="inp" /><br>
+    Timespent: <input id="timesp" class="inp" /><br>
+    Inprogress: <input id="prog" class="inp" /><br>
+    Description: <textarea id="des" class="description"></textarea>>
+    
+    <input type="button" value="Create Entry" onclick="luo()">
+    </div>
+    <ul id="lista" class="alldiaries"></ul>
+
+    
+
+    <script>
+        const apiUrl="http://localhost:3000";
+        $(document).ready(haekaikki)
+        function haekaikki(){
+        $.getJSON(apiUrl+"/api/entries", function (data) {
+            console.dir(data);
+            $("#lista").empty();
+            for (let p of data) {
+                let tempstring=`<li>${
+                    "Title: " + p.title + "<br>" + 
+                    "Time to master :" + p.timeto + "<br>" + 
+                    "Time Spent :" + p.timesp + "<br>" + 
+                    "In progress? " + p.prog + "<br>" +
+                    "Description: " + p.des}
+                    <br><button onclick=poista('${p.id}')>Delete Entry</button></li>`;
+                $("#lista").prepend(tempstring);
+            }
+        })
+    }
+    function poista(id){
+        var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "http://localhost:3000/api/entries/"+id,
+  "method": "DELETE",
+  
+}
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+  haekaikki();
+});
+    }
+        function luo() {
+            let title = $("#title").val();
+            let des = $("#des").val();
+            let timeto = $("#timeto").val();
+            let timesp = $("#timesp").val();
+            let prog = $("#prog").val();
+            console.log(title + des + timeto + timesp + prog);
+            let entry = { title: title, des: des, timeto: timeto, timesp: timesp, prog: prog };
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "http://localhost:3000/api/entries",
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                "data": JSON.stringify(entry)
+            }
+
+            $.ajax(settings).done(function (response) {
+                console.log(response);
+                haekaikki();
+            });
+        }
+
+    </script>
+</body>
+
+</html>
+
+
